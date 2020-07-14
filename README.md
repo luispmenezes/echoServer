@@ -7,7 +7,7 @@ Run server listening on port **8080** and responding with status code **200**, p
 ./echoServer
 ```
 
-Run server listening on port **300** and responding with status code **201** and printing raw request bodies. 
+Run server listening on port **3000** and responding with status code **201** and printing raw request bodies. 
 ```
 ./echoServer -port 3000 -respCode 201 -raw
 ```
