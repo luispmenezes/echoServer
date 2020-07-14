@@ -11,15 +11,18 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"strings"
 )
 
 const defaultPort = 8080
 
 var responseStatusCode *int
+var rawBody *bool
 
 func main() {
 	port := flag.Int("port", defaultPort, "server port")
 	responseStatusCode = flag.Int("respCode", http.StatusOK, "response status code")
+	rawBody = flag.Bool("raw", false, "show unformatted request body")
 	help := flag.Bool("h", false, "print help")
 	flag.Parse()
 
@@ -57,16 +60,16 @@ func handleRequest(w http.ResponseWriter, req *http.Request) {
 
 		contentType, contentTypeExists := req.Header["Content-Type"]
 
-		if contentTypeExists {
-			if contentType[0] == "application/json" {
+		if contentTypeExists && !*rawBody {
+			if strings.Contains(contentType[0], "application/json") {
 				formattedBody := &bytes.Buffer{}
 				if err := json.Indent(formattedBody, body, "", "  "); err != nil {
 					log.Fatal(formattedBody)
 				}
 				fmt.Println(formattedBody.String())
-			} else if contentType[0] == "application/xml" {
+			} else if strings.Contains(contentType[0], "application/xml") {
 				fmt.Println(xmlfmt.FormatXML(string(body), "", "  "))
-			} else if contentType[0] == "text/html" {
+			} else if strings.Contains(contentType[0], "application/html") {
 				fmt.Println(gohtml.Format(string(body)))
 			} else {
 				fmt.Println(string(body))

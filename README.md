@@ -1,13 +1,14 @@
 # ECHO SERVER
-Echo server is a simple http server that outputs request information to console.
+Echo server is a simple http server that outputs incoming request headers and formatted body to console.
 
-#Usage
-Build executable.
+# Usage
+Run server listening on port **8080** and responding with status code **200**, printing formatted **json**,**xml** or **html** request bodies.
 ```
-go build
+./echoServer
 ```
-Run (default settings are listening on port **8080** and responding with status code **200**).
+
+Run server listening on port **300** and responding with status code **201** and printing raw request bodies. 
 ```
-./echoServer -p 3000 -respCode 201
+./echoServer -port 3000 -respCode 201 -raw
 ```
 
