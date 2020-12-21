@@ -6,6 +6,7 @@ import (
 	"flag"
 	"fmt"
 	"github.com/go-xmlfmt/xmlfmt"
+	"github.com/pkg/errors"
 	"github.com/yosssi/gohtml"
 	"io/ioutil"
 	"log"
@@ -18,13 +19,23 @@ const defaultPort = 8080
 
 var responseStatusCode *int
 var rawBody *bool
+var responseBody string
 
 func main() {
 	port := flag.Int("port", defaultPort, "server port")
-	responseStatusCode = flag.Int("respCode", http.StatusOK, "response status code")
+	responseStatusCode = flag.Int("respCode", http.StatusOK, "responseBody status code")
 	rawBody = flag.Bool("raw", false, "show unformatted request body")
+	responseFile := flag.String("respFile", "", "path to file containing responseBody")
 	help := flag.Bool("h", false, "print help")
 	flag.Parse()
+
+	if len(*responseFile) > 0 {
+		fileBytes, err := ioutil.ReadFile(*responseFile)
+		if err != nil {
+			log.Fatal(errors.Wrap(err, "failed to open file containing response body"))
+		}
+		responseBody = string(fileBytes)
+	}
 
 	if *help {
 		fmt.Println("Usage:")
@@ -78,5 +89,5 @@ func handleRequest(w http.ResponseWriter, req *http.Request) {
 			fmt.Println(string(body))
 		}
 	}
-	w.WriteHeader(*responseStatusCode)
+	http.Error(w, responseBody, *responseStatusCode)
 }
