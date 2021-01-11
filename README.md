@@ -12,3 +12,8 @@ Run server listening on port **3000** and responding with status code **201** an
 ./echoServer -port 3000 -respCode 201 -raw
 ```
 
+Run server listening on default port responding with the contents of **/tmp/response.json**. 
+```
+./echoServer -respFile /tmp/response.json
+```
+
