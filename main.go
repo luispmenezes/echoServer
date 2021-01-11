@@ -49,11 +49,12 @@ func main() {
 	err := http.ListenAndServe(fmt.Sprintf(":%d", *port), nil)
 
 	if err != nil {
-		log.Fatal(err)
+		log.Fatal("\nERROR: failed to start http server - " + err.Error())
 	}
 }
 
 func handleRequest(w http.ResponseWriter, req *http.Request) {
+	log.Println(">>>>>>>>>>>>>>>>>>>>>>>>")
 	log.Printf(">>> %s %s", req.Method, req.RequestURI)
 	fmt.Printf("Protocol: %s ContentLength: %d RemoteAddr:%s\n", req.Proto, req.ContentLength, req.RemoteAddr)
 	fmt.Println("Headers:")
@@ -65,7 +66,7 @@ func handleRequest(w http.ResponseWriter, req *http.Request) {
 	if req.ContentLength > 0 {
 		body, err := ioutil.ReadAll(req.Body)
 		if err != nil {
-			log.Fatal(err)
+			log.Println("\nERROR: " + err.Error() + "\n")
 		}
 		fmt.Println("Body:")
 
@@ -75,7 +76,8 @@ func handleRequest(w http.ResponseWriter, req *http.Request) {
 			if strings.Contains(contentType[0], "application/json") {
 				formattedBody := &bytes.Buffer{}
 				if err := json.Indent(formattedBody, body, "", "  "); err != nil {
-					log.Fatal(formattedBody)
+					log.Println("\nERROR: failed to format json body " + err.Error() + "\n")
+					log.Print(string(body))
 				}
 				fmt.Println(formattedBody.String())
 			} else if strings.Contains(contentType[0], "application/xml") {
